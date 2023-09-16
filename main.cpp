@@ -1,39 +1,58 @@
+#include <fstream>
 #include <iostream>
-using namespace std;
+#include <string>
+#include <vector>
 
 struct anime {
   int id;
-  char imya[20];
-  bool ended;
-  char data{9};
+  char name[20];
+  int ended;
+  char data[10];
   int review;
 };
 
 int main() {
+  vector<anime> spisok;
   int meniu = 8;
   setlocale(LC_ALL, "rus");
   while (1) {
     if (1 <= meniu && meniu <= 9) {
       if (meniu == 1) {
-        cout << "Ввод БД:\n";
-        cout << "  1.из файла\n";
-        cout << "  2.с клавиатуры\n";
-        cin >> meniu;
+        std::cout << "Ввод БД:\n";
+        std::cout << "  1.из файла\n";
+        std::cout << "  2.с клавиатуры\n";
+        std::cin >> meniu;
         if (meniu == 1) {
+          std::cout << "Введите название файла:\n";
+          std::string name;
+          std::cin >> name;
+          std::fstream file(name, std::fstream::in);
+          if (!file.is_open()) {
+            std::cerr << "Ошибка открытия файла" << std::endl;
+          } else {
+            std::string line;
+            while (std::getline(file, line)) {
+              sscanf(line, "%d %19s %d %8s %d", &id, name, &ended, data,
+                     &review);
+            }
+          }
         }
         if (meniu == 2) {
-          ;
+          std::cout << "Введите количество строк:\n";
+
+          std::cout << "Введите БД построчно:\n";
+          for (int i = 0; i < count; i++) {
+            scanf("%d %19s %d %8s %d", &id, name, &ended, data, &review);
+          }
         }
       }
-      elif (meniu == 2) {
-        ;
-      }
+      elif (meniu == 2) { ; }
       elif (meniu == 3) {
-        cout << "Редактирование данных:\n";
-        cout << "  1.очистить БД\n";
-        cout << "  2.добавить запись\n";
-        cout << "  3.удалить запись\n";
-        cin >> meniu;
+        std::cout << "Редактирование данных:\n";
+        std::cout << "  1.очистить БД\n";
+        std::cout << "  2.добавить запись\n";
+        std::cout << "  3.удалить запись\n";
+        std::cin >> meniu;
         if (meniu == 1) {
         }
         if (meniu == 2) {
@@ -43,41 +62,33 @@ int main() {
         }
       }
       elif (meniu == 4) {
-        cout << "Вывод БД:\n";
-        cout << "  1.в файл\n";
-        cout << "  2.на экран\n";
-        cin >> meniu;
+        std::cout << "Вывод БД:\n";
+        std::cout << "  1.в файл\n";
+        std::cout << "  2.на экран\n";
+        std::cin >> meniu;
         if (meniu == 1) {
         }
         if (meniu == 2) {
           ;
         }
       }
-      elif (meniu == 5) {
-        ;
-      }
-      elif (meniu == 6) {
-        ;
-      }
-      elif (meniu == 7) {
-        ;
-      }
+      elif (meniu == 5) { ; }
+      elif (meniu == 6) { ; }
+      elif (meniu == 7) { ; }
       elif (meniu == 8) {
         system("cls");
-        cout << " МЕНЮ:\n";
-        cout << "  1.Ввод БД:\n";
-        cout << "  2.Просмотр всей БД\n";
-        cout << "  3.Редактирование данных:\n";
-        cout << "  4.Вывод БД:\n";
-        cout << "  5.Поиск данных по пробегу\n";
-        cout << "  6.Сортировка по году выпуска\n";
-        cout << "  7.О разработчике\n";
-        cout << "  8.Очистить экран\n";
-        cout << "  9.Выход\n\n";
+        std::cout << " МЕНЮ:\n";
+        std::cout << "  1.Ввод БД:\n";
+        std::cout << "  2.Просмотр всей БД\n";
+        std::cout << "  3.Редактирование данных:\n";
+        std::cout << "  4.Вывод БД:\n";
+        std::cout << "  5.Поиск данных по пробегу\n";
+        std::cout << "  6.Сортировка по году выпуска\n";
+        std::cout << "  7.О разработчике\n";
+        std::cout << "  8.Очистить экран\n";
+        std::cout << "  9.Выход\n\n";
       }
-      elif (meniu == 9) {
-        break;
-      }
+      elif (meniu == 9) { break; }
     } else {
       cout << "ERROR! \n\n";
     }
