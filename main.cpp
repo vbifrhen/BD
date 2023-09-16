@@ -52,6 +52,7 @@ int main() {
         std::cout << "  1.очистить БД\n";
         std::cout << "  2.добавить запись\n";
         std::cout << "  3.удалить запись\n";
+        std::cout << "  4.изменить запись по id\n";
         std::cin >> meniu;
         if (meniu == 1) {
         }
@@ -59,6 +60,8 @@ int main() {
           ;
         }
         if (meniu == 3) {
+        }
+        if (meniu == 4) {
         }
       }
       elif (meniu == 4) {
