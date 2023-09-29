@@ -35,9 +35,21 @@ public:
         return it->second;
     }
 
-    void Update(int id, const Anime &item)
+    void Update(int id)
     {
-        data_[id] = item;
+        auto it = data_.find(id);
+        if (it != data_.end())
+        {
+            Anime item;
+            std::cout << "Введите обновлённую строку:\n";
+            std::cin >> item.name >> item.ended >> item.data >>
+                item.review;
+            data_[id] = item;
+        }
+        else
+        {
+            throw std::runtime_error("Element not found");
+        }
     }
 
     void Remove(int id)
@@ -87,26 +99,23 @@ public:
     }
 };
 
-void printMenu() {
-    std::cout << " МЕНЮ:\n";
-    std::cout << "  1.Ввод БД:\n";
-    std::cout << "  2.Вывод БД:\n";
-    std::cout << "  3.Редактирование данных:\n";
-    std::cout << "  4.Поиск данных по айди\n";
-    std::cout << "  5.Очистить экран\n";
-    std::cout << "  6.Выход(полное окончание)\n\n";
+void printMenu()
+{
+    std::cout << " MENU:\n";
+    std::cout << "  1.Input DB:\n";
+    std::cout << "  2.Output DB:\n";
+    std::cout << "  3.Edit data:\n";
+    std::cout << "  4.Find with id\n";
+    std::cout << "  5.Clear the screen\n";
+    std::cout << "  6.End the program\n\n";
 }
-
 
 int main()
 {
     DataStorage storage;
     int id;
     Anime item;
-    int menu_option = 8;
-
-    system("cls");
-    printMenu();
+    int menu_option = 5;
 
     while (true)
     {
@@ -116,19 +125,19 @@ int main()
             {
             case 1:
             {
-                std::cout << "Ввод БД:\n";
-                std::cout << "  1.из файла\n";
-                std::cout << "  2.с клавиатуры\n";
+                std::cout << "Input DB:\n";
+                std::cout << "  1.from file\n";
+                std::cout << "  2.from console\n";
                 std::cin >> menu_option;
                 if (menu_option == 1)
                 {
-                    std::cout << "Введите название файла:\n";
+                    std::cout << "Write name of file:\n";
                     std::string name;
                     std::cin >> name;
                     std::fstream file(name, std::fstream::in);
                     if (!file.is_open())
                     {
-                        std::cerr << "Ошибка открытия файла" << std::endl;
+                        std::cerr << "Unable to open file" << std::endl;
                     }
                     else
                     {
@@ -141,12 +150,12 @@ int main()
                         }
                     }
                 }
-                if (menu_option == 2)
+                else if (menu_option == 2)
                 {
-                    std::cout << "Введите количество строк:\n";
+                    std::cout << "Write number of rows:\n";
                     int count;
                     std::cin >> count;
-                    std::cout << "Введите БД построчно:\n";
+                    std::cout << "Write DB by rows:\n";
                     for (int i = 0; i < count; i++)
                     {
                         std::cin >> id >> item.name >> item.ended >> item.data >>
@@ -159,13 +168,13 @@ int main()
             }
             case 2:
             {
-                std::cout << "Вывод БД:\n";
-                std::cout << "  1.в файл\n";
-                std::cout << "  2.на экран\n";
+                std::cout << "Output DB:\n";
+                std::cout << "  1.into file\n";
+                std::cout << "  2.on screen\n";
                 std::cin >> menu_option;
                 if (menu_option == 1)
                 {
-                    std::cout << "Введите название файла:\n";
+                    std::cout << "Write name of file:\n";
                     std::string name;
                     std::cin >> name;
                     try
@@ -186,43 +195,47 @@ int main()
             }
             case 3:
             {
-                std::cout << "Редактирование данных:\n";
-                std::cout << "  1.очистить БД\n";
-                std::cout << "  2.добавить запись\n";
-                std::cout << "  3.удалить запись\n";
-                std::cout << "  4.изменить запись по id\n";
+                std::cout << "Edit data:\n";
+                std::cout << "  1.clear DB\n";
+                std::cout << "  2.add row\n";
+                std::cout << "  3.delete row\n";
+                std::cout << "  4.change row by id\n";
                 std::cin >> menu_option;
                 if (menu_option == 1)
                 {
                     storage.Clear_all();
                 }
-                if (menu_option == 2)
+                else if (menu_option == 2)
                 {
                     std::cin >> id >> item.name >> item.ended >> item.data >>
                         item.review;
                     storage.Add(id, item);
                 }
-                if (menu_option == 3)
+                else if (menu_option == 3)
                 {
-                    std::cout << "Введите id:\n";
+                    std::cout << "Write the id:\n";
                     std::cin >> id;
                     storage.Remove(id);
                 }
-                if (menu_option == 4)
+                else if (menu_option == 4)
                 {
-                    std::cout << "Введите id:\n";
+                    std::cout << "Write the id:\n";
                     std::cin >> id;
-                    std::cout << "Введите обновлённую строку:\n";
-                    std::cin >> item.name >> item.ended >> item.data >>
-                        item.review;
-                    storage.Update(id, item);
+                    try
+                    {
+                        storage.Update(id);
+                    }
+                    catch (const std::runtime_error &e)
+                    {
+                        std::cerr << e.what() << std::endl;
+                    }
                 }
                 printMenu();
                 break;
             }
             case 4:
             {
-                std::cout << "Введите id:\n";
+                std::cout << "Write the id:\n";
                 std::cin >> id;
                 try
                 {
@@ -249,6 +262,7 @@ int main()
             default:
             {
                 std::cout << "ERROR! \n\n";
+                printMenu();
                 break;
             }
             }
@@ -256,6 +270,7 @@ int main()
         else
         {
             std::cout << "ERROR! \n\n";
+            printMenu();
         }
         std::cin >> menu_option;
     }
