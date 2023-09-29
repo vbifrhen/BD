@@ -1,18 +1,14 @@
+#include "bd.h"
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
-
-struct anime {
-  int id;
-  char name[20];
-  int ended;
-  char data[10];
-  int review;
-};
+#include <sstream>
 
 int main() {
-  vector<anime> spisok;
+  DataStorage storage;
+  int id;
+  anime item;
   int meniu = 8;
   setlocale(LC_ALL, "rus");
   while (1) {
@@ -32,22 +28,36 @@ int main() {
           } else {
             std::string line;
             while (std::getline(file, line)) {
-              sscanf(line, "%d %19s %d %8s %d", &id, name, &ended, data,
-                     &review);
+              std::stringstream ss(line);
+              ss >> id >> item.name >> item.ended >> item.data >> item.review;
+              storage.add(id, item);
             }
           }
         }
         if (meniu == 2) {
           std::cout << "Введите количество строк:\n";
-
+          int count;
+          std::cin >> count;
           std::cout << "Введите БД построчно:\n";
           for (int i = 0; i < count; i++) {
-            scanf("%d %19s %d %8s %d", &id, name, &ended, data, &review);
-          }
+            std::cin >> id >> item.name >> item.ended >> item.data >>
+                     item.review;
+              storage.add(id, item);
+        }
         }
       }
-      elif (meniu == 2) { ; }
-      elif (meniu == 3) {
+      else if (meniu == 2) {
+        std::cout << "Вывод БД:\n";
+        std::cout << "  1.в файл\n";
+        std::cout << "  2.на экран\n";
+        std::cin >> meniu;
+        if (meniu == 1) {
+        }
+        if (meniu == 2) {
+          ;
+        }
+      }
+      else if (meniu == 3) {
         std::cout << "Редактирование данных:\n";
         std::cout << "  1.очистить БД\n";
         std::cout << "  2.добавить запись\n";
@@ -60,42 +70,48 @@ int main() {
           ;
         }
         if (meniu == 3) {
+          std::cout << "Введите id:\n";
+            std::cin >> id;
+          storage.remove(id);
         }
         if (meniu == 4) {
+          std::cout << "Введите id:\n";
+            std::cin >> id;
+            std::cout << "Введите обновлённую строку:\n";
+            std::cin >> item.name >> item.ended >> item.data >>
+                     item.review;
+            storage.update(id, item);
         }
       }
-      elif (meniu == 4) {
-        std::cout << "Вывод БД:\n";
-        std::cout << "  1.в файл\n";
-        std::cout << "  2.на экран\n";
-        std::cin >> meniu;
-        if (meniu == 1) {
-        }
-        if (meniu == 2) {
-          ;
-        }
-      }
-      elif (meniu == 5) { ; }
-      elif (meniu == 6) { ; }
-      elif (meniu == 7) { ; }
-      elif (meniu == 8) {
+      
+      else if (meniu == 4) { 
+        std::cout << "Введите id:\n";
+        try {
+                item = storage.get(id);
+                std::cout << id << item.name << item.ended << item.data <<
+                     item.review;
+            } catch (const std::runtime_error& e) {
+                std::cerr << e.what() << std::endl;
+            }}
+      else if (meniu == 5) { ; }
+      else if (meniu == 6) { ; }
+      else if (meniu == 7) {
         system("cls");
         std::cout << " МЕНЮ:\n";
         std::cout << "  1.Ввод БД:\n";
-        std::cout << "  2.Просмотр всей БД\n";
+        std::cout << "  2.Вывод БД:\n";
         std::cout << "  3.Редактирование данных:\n";
-        std::cout << "  4.Вывод БД:\n";
-        std::cout << "  5.Поиск данных по пробегу\n";
-        std::cout << "  6.Сортировка по году выпуска\n";
-        std::cout << "  7.О разработчике\n";
-        std::cout << "  8.Очистить экран\n";
-        std::cout << "  9.Выход\n\n";
+        std::cout << "  4.Поиск данных по айди\n";
+        std::cout << "  5.Сортировка по году выпуска\n";
+        std::cout << "  6.О разработчике\n";
+        std::cout << "  7.Очистить экран\n";
+        std::cout << "  8.Выход\n\n";
       }
-      elif (meniu == 9) { break; }
+      else if (meniu == 8) { break; }
     } else {
-      cout << "ERROR! \n\n";
+      std::cout << "ERROR! \n\n";
     }
-    cin >> meniu;
+    std::cin >> meniu;
   }
   system("pause");
   return 0;
