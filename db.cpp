@@ -98,6 +98,9 @@ public:
 
     void WriteToFile(const std::string &filename)
     {
+        if (data_.empry()) {
+             std::cout << "DB is emty";
+        }
         std::ofstream file(filename, std::ios::out);
         if (!file.is_open())
         {
@@ -119,6 +122,9 @@ public:
 
     void Print()
     {
+        if (data_.empry()) {
+             std::cout << "DB is emty";
+        }
         for (const auto &pair : data_)
         {
             const Anime &item = pair.second;
