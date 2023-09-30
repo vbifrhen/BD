@@ -20,9 +20,36 @@ private:
     std::map<int, Anime> data_;
 
 public:
-    void Add(int id, const Anime &item)
+    void Add_fromfile(int id, const Anime &item)
     {
-        data_[id] = item;
+        auto it = data_.find(id);
+        if (it == data_.end())
+        {
+            data_[id] = item;
+        }
+        else
+        {
+            std::stringstream ss;
+            ss << "Element by this id: " << id << " already exist. In DB will be only first occurrence.";
+            std::cerr << ss.str() << std::endl;
+        }
+    }
+
+    void Add(int id)
+    {
+        auto it = data_.find(id);
+        if (it == data_.end())
+        {
+            Anime item;
+            std::cout << "Write new row:\n";
+            std::cin >> item.name >> item.ended >> item.data >>
+                item.review;
+            data_[id] = item;
+        }
+        else
+        {
+            throw std::runtime_error("Element already exist");
+        }
     }
 
     Anime &Get(int id)
@@ -41,20 +68,27 @@ public:
         if (it != data_.end())
         {
             Anime item;
-            std::cout << "Введите обновлённую строку:\n";
+            std::cout << "Write updated row:\n";
             std::cin >> item.name >> item.ended >> item.data >>
                 item.review;
             data_[id] = item;
         }
         else
         {
-            throw std::runtime_error("Element not found");
+            throw std::runtime_error("Element by id doesn't found");
         }
     }
 
     void Remove(int id)
     {
-        data_.erase(id);
+        auto it = data_.find(id);
+        if (it != data_.end()) {
+            data_.erase(id);
+        }
+        else {
+            throw std::runtime_error("Element by id doesn't exist");
+        }
+        
     }
 
     void Clear_all()
@@ -72,9 +106,8 @@ public:
 
         for (const auto &pair : data_)
         {
-            const int id = pair.first;
             const Anime &item = pair.second;
-            file << id << pair.first << ' '
+            file << pair.first << ' '
                  << item.name << ' '
                  << item.ended << ' '
                  << item.data << ' '
@@ -88,9 +121,8 @@ public:
     {
         for (const auto &pair : data_)
         {
-            const int id = pair.first;
             const Anime &item = pair.second;
-            std::cout << id << ' '
+            std::cout << pair.first << ' '
                       << item.name << ' '
                       << item.ended << ' '
                       << item.data << ' '
@@ -119,7 +151,9 @@ int main()
 
     while (true)
     {
-        if (1 <= menu_option && menu_option <= 9)
+        printMenu();
+        std::cin >> menu_option;
+        if (1 <= menu_option && menu_option <= 6)
         {
             switch (menu_option)
             {
@@ -146,7 +180,7 @@ int main()
                         {
                             std::stringstream ss(line);
                             ss >> id >> item.name >> item.ended >> item.data >> item.review;
-                            storage.Add(id, item);
+                            storage.Add_fromfile(id, item);
                         }
                     }
                 }
@@ -155,15 +189,20 @@ int main()
                     std::cout << "Write number of rows:\n";
                     int count;
                     std::cin >> count;
-                    std::cout << "Write DB by rows:\n";
                     for (int i = 0; i < count; i++)
                     {
-                        std::cin >> id >> item.name >> item.ended >> item.data >>
-                            item.review;
-                        storage.Add(id, item);
+                        std::cout << "Write the id:\n";
+                        std::cin >> id;
+                        try
+                        {
+                            storage.Add(id);
+                        }
+                        catch (const std::runtime_error &e)
+                        {
+                            std::cerr << e.what() << std::endl;
+                        }
                     }
                 }
-                printMenu();
                 break;
             }
             case 2:
@@ -190,7 +229,6 @@ int main()
                 {
                     storage.Print();
                 }
-                printMenu();
                 break;
             }
             case 3:
@@ -207,15 +245,29 @@ int main()
                 }
                 else if (menu_option == 2)
                 {
-                    std::cin >> id >> item.name >> item.ended >> item.data >>
-                        item.review;
-                    storage.Add(id, item);
+                    std::cout << "Write the id:\n";
+                    std::cin >> id;
+                    try
+                    {
+                        storage.Add(id);
+                    }
+                    catch (const std::runtime_error &e)
+                    {
+                        std::cerr << e.what() << std::endl;
+                    }
                 }
                 else if (menu_option == 3)
                 {
                     std::cout << "Write the id:\n";
                     std::cin >> id;
-                    storage.Remove(id);
+                    try
+                    {
+                        storage.Remove(id);
+                    }
+                    catch (const std::runtime_error &e)
+                    {
+                        std::cerr << e.what() << std::endl;
+                    }
                 }
                 else if (menu_option == 4)
                 {
@@ -230,7 +282,6 @@ int main()
                         std::cerr << e.what() << std::endl;
                     }
                 }
-                printMenu();
                 break;
             }
             case 4:
@@ -246,33 +297,24 @@ int main()
                 {
                     std::cerr << e.what() << std::endl;
                 }
-                printMenu();
                 break;
             }
             case 5:
             {
                 system("cls");
-                printMenu();
                 break;
             }
             case 6:
             {
                 return 0;
             }
-            default:
-            {
-                std::cout << "ERROR! \n\n";
-                printMenu();
-                break;
-            }
             }
         }
         else
         {
             std::cout << "ERROR! \n\n";
-            printMenu();
+            break;
         }
-        std::cin >> menu_option;
     }
     return 0;
 }
